@@ -1,0 +1,2 @@
+pika #A Python library for working with RabbitMQ.
+python-dotenv
