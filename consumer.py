@@ -1,5 +1,5 @@
 import pika
-from config import RABBITMQ_HOST, RABBITMQ_QUEUE
+from config import RABBITMQ_HOST, RABBITMQ_QUEUE, RABBITMQ_USER, RABBITMQ_PASS
 import logging
 import time
 
@@ -20,8 +20,10 @@ def start_consumer(max_retries=10, delay_seconds=5):
     for attempt in range(max_retries):
         try:
             logging.info(f"Attempting to connect to RabbitMQ at {RABBITMQ_HOST} (attempt {attempt + 1})")
+            credentials = pika.PlainCredentials(RABBITMQ_USER, RABBITMQ_PASS)
+            parameters = pika.ConnectionParameters(host=RABBITMQ_HOST, credentials=credentials)
             #Connects to the RabbitMQ server.
-            connection = pika.BlockingConnection(pika.ConnectionParameters(host=RABBITMQ_HOST))
+            connection = pika.BlockingConnection(parameters)
             break
         except pika.exceptions.AMQPConnectionError as e:
             logging.warning(f"Connection failed: {e}. Retrying in {delay_seconds} seconds...")
